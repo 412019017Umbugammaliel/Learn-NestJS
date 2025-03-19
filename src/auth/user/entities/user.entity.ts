@@ -22,6 +22,9 @@ export class User{
     @Column({type: 'varchar', length: 255})
     password:string;
 
+    @Column({ default: 'user' })
+    role: string;
+
     @CreateDateColumn({nullable: true})
     created_at?: Date;
 

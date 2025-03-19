@@ -16,7 +16,7 @@ export class AuthService {
     ) {}
 
     async register(registerDto: RegisterDto) {
-        const { nik, name, email, bagian, password } = registerDto;
+        const { nik, name, email, bagian, password, role } = registerDto;
     
         // const salt = await bcrypt.genSalt(10);
         const user = this.userRepository.create({
@@ -24,7 +24,8 @@ export class AuthService {
             name,
             email,
             bagian,
-            password
+            password,
+            role:role || 'user'
         });
     
         await this.userRepository.save(user);
@@ -40,10 +41,10 @@ export class AuthService {
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            throw new UnauthorizedException('Password Salah');
+            throw new UnauthorizedException('Password Incorrect');
         }
     
-        const payload = { email: user.email, sub: user.id };
+        const payload = { email: user.email, sub: user.id, role:user.role };
     
         return {
             access_token: this.jwtService.sign(payload),
@@ -52,7 +53,8 @@ export class AuthService {
                 nik:user.nik,
                 name: user.name,
                 email: user.email,
-                bagian: user.bagian
+                bagian: user.bagian,
+                role: user.role
             }
         };
     }
