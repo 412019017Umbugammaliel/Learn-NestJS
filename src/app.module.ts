@@ -7,11 +7,14 @@ import { UserService } from './auth/user/services/user.service';
 import { dataSourceOptions } from './config/database.config';
 import { ProductController } from './product/controllers/product.controller';
 import { ProductService } from './product/services/product.service';
+import { AuthModule } from './auth/authentication/auth.module';
+
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forFeature([User, Product])
+    TypeOrmModule.forFeature([User, Product]),
+    AuthModule
   ],
   controllers: [UserController, ProductController],
   providers: [UserService, ProductService],
