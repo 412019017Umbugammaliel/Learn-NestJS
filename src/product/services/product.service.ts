@@ -29,13 +29,17 @@ export class ProductService{
         return this.productRepository.findOne({ where: {id_produk} });
     }
 
-    async updateProduct(id_produk: string, updateData:UpdateProductDto): Promise<Product>{
-        const product = await this.productRepository.findOne({ where: {id_produk}});
-    if (!product){
-        throw new Error('Product not Found')
-    }
-    Object.assign(product, updateData);
-    return await this.productRepository.save(product);
+    async updateProduct(id_produk: string, updateData: UpdateProductDto, file?: Express.Multer.File): Promise<Product> {
+        const product = await this.productRepository.findOne({ where: { id_produk } });
+    
+        if (!product) {
+            throw new NotFoundException('Product not found');
+        }
+        if (file) {
+            updateData.gambar_produk = file.filename;
+        }
+        Object.assign(product, updateData);
+        return await this.productRepository.save(product);
     }
     
     async deleteProduct(id_produk: string): Promise<string> {

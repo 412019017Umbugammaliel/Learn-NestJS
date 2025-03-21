@@ -4,26 +4,14 @@ import { Product } from "../entities/product.entity"
 import { CreateProductDto } from "../services/dto/create-product.dto";
 import { UpdateProductDto } from "../services/dto/update-product.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { extname } from "path";
+import { storageConfig } from "../../config/multer.config";
 
 @Controller('products')
 export class ProductController{
     constructor (private readonly productService: ProductService){}
 
     @Post('/createProduct')
-    @UseInterceptors(
-        FileInterceptor('gambar_produk', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                    cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
-                },
-            }),
-        }),
-    )
-    @Post('/createProduct')
+    @UseInterceptors(FileInterceptor('gambar_produk', storageConfig))
     createProduct(@Body() createProductDto: CreateProductDto, @UploadedFile() file: Express.Multer.File) {
         return this.productService.createProduct(createProductDto, file);
     }
@@ -39,9 +27,14 @@ export class ProductController{
     }
 
     @Put('/editProduct/:id_produk')
-    async updateProduct(@Param('id_produk') id_produk:string, @Body() updateData: UpdateProductDto) {
-        return this.productService.updateProduct(id_produk, updateData);
-    }
+    @UseInterceptors(FileInterceptor('gambar_produk', storageConfig))
+    async updateProduct(
+        @Param('id_produk') id_produk: string,
+        @Body() updateData: UpdateProductDto,
+        @UploadedFile() file?: Express.Multer.File
+    ) {
+        return this.productService.updateProduct(id_produk, updateData, file);
+    }    
 
     @Delete('/deleteProduct/:id')
     async deleteProduct(@Param('id') id_produk:string){
