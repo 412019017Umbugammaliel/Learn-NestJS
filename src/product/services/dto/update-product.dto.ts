@@ -1,6 +1,4 @@
-export class ProductUpdateDTO{
-    nama_produk: string;
-    kode_produk: string;
-    kategori_produk: string;
-    harga_satuan: number;
-}
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateProductDto } from './create-product.dto';
+
+export class UpdateProductDto extends PartialType(CreateProductDto) {}

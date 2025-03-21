@@ -3,8 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Product } from "../entities/product.entity";
 import { Repository } from "typeorm";
 import { promises } from "dns";
-import { ProductCreateDTO } from "./dto/create-product.dto";
-import { ProductUpdateDTO } from "./dto/update-product.dto";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
 
 @Injectable()
 export class ProductService{
@@ -13,9 +13,12 @@ export class ProductService{
         @InjectRepository(Product) private readonly productRepository:Repository<Product>,
     ){}
 
-    async createProduct(productCreateDto:ProductCreateDTO): Promise<Product>{
-        const product= this.productRepository.create(productCreateDto);
-        return await this.productRepository.save(product);
+    async createProduct(createProductDto: CreateProductDto, file: Express.Multer.File | undefined): Promise<Product> {
+        const newProduct = this.productRepository.create({
+            ...createProductDto,
+            gambar_produk: file ? file.filename : "",
+        });
+        return await this.productRepository.save(newProduct);
     }
 
     async findAll(): Promise<Product[]>{
@@ -26,7 +29,7 @@ export class ProductService{
         return this.productRepository.findOne({ where: {id_produk} });
     }
 
-    async updateProduct(id_produk: string, updateData:ProductUpdateDTO): Promise<Product>{
+    async updateProduct(id_produk: string, updateData:UpdateProductDto): Promise<Product>{
         const product = await this.productRepository.findOne({ where: {id_produk}});
     if (!product){
         throw new Error('Product not Found')
