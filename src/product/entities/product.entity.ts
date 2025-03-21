@@ -18,6 +18,9 @@ export class Product{
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     harga_satuan: number;
 
+    @Column({ type: 'varchar', nullable: true })
+    gambar_produk: string;
+
     @CreateDateColumn({nullable: true})
     created_at?: Date;
 

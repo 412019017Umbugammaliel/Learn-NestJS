@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service';
 import { UserCreateDTO } from '../services/dto/create-user.dto';
 import { User } from '../entities/user.entity';
 import { UserUpdateDTO } from '../services/dto/update-user.dto';
-import { AuthGuard } from '@nestjs/passport';
+// import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/authentication/guards/roles.guard';
 import { Roles } from 'src/auth/authentication/decorators/roles.decorator';
 
@@ -32,8 +32,9 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
-  @Roles('admin')
+  // @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @UseGuards(RolesGuard)
+  // @Roles('admin')
   deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id);
   }
